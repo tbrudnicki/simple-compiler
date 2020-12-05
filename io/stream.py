@@ -1,11 +1,12 @@
 class InputStream:
 
-    def __init__(self, file_name):
+    def __init__(self, file_name, stream_encoding='utf-8'):
         self.file_name = file_name
         self.fd = None
         self.pos = 0
         self.line = 1
         self.col = 0
+        self.stream_encoding = stream_encoding
 
     def __enter__(self):
         self.init()
@@ -19,12 +20,12 @@ class InputStream:
 
     def peek(self):
         current_position = self.fd.tell()
-        c = self.fd.read(1)
+        c = self._read_single_character()
         self.fd.seek(current_position)
         return c
 
     def next(self):
-        current = self.fd.read(1)
+        current = self._read_single_character()
         self.pos += 1
         if current == '\n':
             self.line += 1
@@ -39,5 +40,10 @@ class InputStream:
     def croak(self, msg):
         raise Exception(msg)
 
+    def close(self):
+        if self.fd:
+            self.fd.close()
 
+    def _read_single_character(self):
+        return self.fd.read(1).decode(self.stream_encoding)
 
