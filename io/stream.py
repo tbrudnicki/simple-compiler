@@ -1,4 +1,14 @@
 class InputStream:
+    class StreamPosition:
+        def __init__(self, line, col):
+            self.line = line
+            self.col = col
+
+        def __str__(self):
+            return f'line: {self.line}, col: {self.col}'
+
+        def __repr__(self):
+            return self.__str__()
 
     def __init__(self, file_name, stream_encoding='utf-8'):
         self.file_name = file_name
@@ -47,3 +57,5 @@ class InputStream:
     def _read_single_character(self):
         return self.fd.read(1).decode(self.stream_encoding)
 
+    def current_position(self):
+        return InputStream.StreamPosition(self.line, self.col)
