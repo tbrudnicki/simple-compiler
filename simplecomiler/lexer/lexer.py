@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 
-from lexer.tokens import *
+from simplecomiler.lexer.tokens import *
 
 
 @contextmanager
