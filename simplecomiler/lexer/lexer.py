@@ -84,13 +84,13 @@ errors
 '''
 
 
-class NumberHandling:
+class NumberHandler:
     INITIAL = 'initial'
     FRACTION = 'fraction'
     SCIENTIFIC = 'scientific'
 
     def __init__(self):
-        self.state = NumberHandling.INITIAL
+        self.state = NumberHandler.INITIAL
 
     def can_handle(self, input_stream):
         stream_lookup = input_stream.peek()
@@ -102,25 +102,25 @@ class NumberHandling:
         def handle_fraction():
             while not input_stream.eof() and input_stream.peek().isnumeric():
                 aggregate.append(input_stream.next())
-            self.state = NumberHandling.FRACTION
+            self.state = NumberHandler.FRACTION
 
         def handle_scientific_notation():
             while not input_stream.eof() and (input_stream.peek().isnumeric() or input_stream.peek() == '-'):
                 aggregate.append(input_stream.next())
-            self.state = NumberHandling.SCIENTIFIC
+            self.state = NumberHandler.SCIENTIFIC
 
         while not input_stream.eof():
             stream_lookup = input_stream.peek()
             if stream_lookup.isnumeric():
                 aggregate.append(input_stream.next())
             elif stream_lookup == '.':
-                if self.state in [NumberHandling.INITIAL]:
+                if self.state in [NumberHandler.INITIAL]:
                     aggregate.append(input_stream.next())
                     handle_fraction()
                 else:
                     break
             elif stream_lookup in ['e', 'E']:
-                if self.state in [NumberHandling.INITIAL, NumberHandling.FRACTION]:
+                if self.state in [NumberHandler.INITIAL, NumberHandler.FRACTION]:
                     handle_scientific_notation()
                 else:
                     break
