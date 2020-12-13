@@ -58,7 +58,7 @@ class StringStreamTestCase(unittest.TestCase):
         self.assertEqual(position_1.line, 1)
 
         for i in range(0, 12):
-            print(input_stream.next())
+            input_stream.next()
 
         position_2 = input_stream.current_position()
 

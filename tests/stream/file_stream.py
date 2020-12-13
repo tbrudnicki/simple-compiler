@@ -9,7 +9,7 @@ class FileStreamTestCase(unittest.TestCase):
     TEST_DATA_ROOT = Path(__file__).parent.parent.parent.joinpath('data').joinpath('test')
 
     def test_retrieve_same_string_as_input(self):
-        file_path = FileStreamTestCase.data_file('test_file.txt')
+        file_path = FileStreamTestCase.data_file('single_line_test_file.txt')
         with file_path.open() as fd:
             file_content = '\n'.join(fd.readlines())
             fd.seek(0)
@@ -22,7 +22,7 @@ class FileStreamTestCase(unittest.TestCase):
 
     def test_peek_retrieves_proper_values(self):
 
-        file_path = FileStreamTestCase.data_file('test_file.txt')
+        file_path = FileStreamTestCase.data_file('single_line_test_file.txt')
         with file_path.open() as fd:
             file_content = '\n'.join(fd.readlines())
             fd.seek(0)
@@ -35,7 +35,7 @@ class FileStreamTestCase(unittest.TestCase):
 
     def test_peek_doesnt_change_stream_position(self):
 
-        file_path = FileStreamTestCase.data_file('test_file.txt')
+        file_path = FileStreamTestCase.data_file('single_line_test_file.txt')
         with file_path.open() as fd:
             file_content = '\n'.join(fd.readlines())
             fd.seek(0)
@@ -54,6 +54,34 @@ class FileStreamTestCase(unittest.TestCase):
 
             self.assertEqual(peek2_1, peek2_2, 'peeks from same position in the stream should return same value')
             self.assertEqual(peek2_2, next_2, 'peek should return same values as next')
+
+    def test_next_properly_updates_stream_position(self):
+        file_path = FileStreamTestCase.data_file('multiline_test_file.txt')
+        with file_path.open() as fd:
+            file_content = '\n'.join(fd.readlines())
+            fd.seek(0)
+
+            input_stream = file_is(fd)
+
+            position_1 = input_stream.current_position()
+
+            self.assertEqual(position_1.col, 0)
+            self.assertEqual(position_1.line, 1)
+
+            for i in range(0, 12):
+                input_stream.next()
+
+            position_2 = input_stream.current_position()
+
+            self.assertEqual(0, position_2.col)
+            self.assertEqual(2, position_2.line)
+
+            while not input_stream.eof():
+                input_stream.next()
+
+            position_3 = input_stream.current_position()
+            self.assertEqual(position_3.line, 3)
+            self.assertEqual(position_3.col, 4)
 
     @staticmethod
     def data_file(file_name):
