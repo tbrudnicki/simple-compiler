@@ -97,7 +97,7 @@ class NumberHandler:
         return stream_lookup.isnumeric() or stream_lookup == '-'
 
     def handle(self, input_stream):
-        aggregate = input_stream.next()
+        aggregate = [input_stream.next()]
 
         def handle_fraction():
             while not input_stream.eof() and input_stream.peek().isnumeric():
@@ -105,9 +105,11 @@ class NumberHandler:
             self.state = NumberHandler.FRACTION
 
         def handle_scientific_notation():
-            while not input_stream.eof() and (input_stream.peek().isnumeric() or input_stream.peek() == '-'):
-                aggregate.append(input_stream.next())
+            exponent_part = []
             self.state = NumberHandler.SCIENTIFIC
+            while not input_stream.eof() and (input_stream.peek().isnumeric() or input_stream.peek() == '-'):
+                exponent_part.append(input_stream.next())
+            return exponent_part
 
         while not input_stream.eof():
             stream_lookup = input_stream.peek()
@@ -121,7 +123,13 @@ class NumberHandler:
                     break
             elif stream_lookup in ['e', 'E']:
                 if self.state in [NumberHandler.INITIAL, NumberHandler.FRACTION]:
-                    handle_scientific_notation()
+                    aggregate.append(input_stream.next())
+                    r = handle_scientific_notation()
+                    if not r:
+                        raise input_stream.croak(f'Invalid number format at: {input_stream.current_position}')
+                    else:
+                        aggregate.extend(r)
+
                 else:
                     break
 

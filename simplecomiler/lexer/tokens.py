@@ -5,12 +5,12 @@ class Token:
 
 
 class Punctuation(Token):
-    def _init_(self, value):
+    def __init__(self, value):
         super().__init__('punc', value)
 
 
 class Number(Token):
-    def _init_(self, value):
+    def __init__(self, value):
         super().__init__('num', value)
 
 
