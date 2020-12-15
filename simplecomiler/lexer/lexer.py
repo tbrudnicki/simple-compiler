@@ -16,8 +16,8 @@ class WhitespaceHandler:
     def __init__(self):
         pass
 
-    def can_handle(self, current_char):
-        return current_char.isspace()
+    def can_handle(self, input_stream):
+        return input_stream.peek().isspace()
 
     def handle(self, input_stream):
         input_stream.next()
@@ -33,9 +33,10 @@ class CommentHandler:
 
     def handle(self, input_stream):
         input_stream.next()
-        while (not input_stream.eof()) and input_stream.next() != '\n':
-            pass
-        return None
+        aggregate = []
+        while (not input_stream.eof()) and input_stream.peek() != '\n':
+            aggregate.append(input_stream.next())
+        return ''.join(aggregate)
 
     def can_handle(self, input_stream):
         return input_stream.peek() == '#'
@@ -69,7 +70,7 @@ class StringHandler:
                 return String(''.join(aggregate))
             aggregate.append(next_element)
 
-        raise input_stream.croak('Not enclosed string at ' + input_stream.current_position())
+        raise input_stream.croak('Not enclosed string at ' + str(input_stream.current_position()))
 
 
 '''
